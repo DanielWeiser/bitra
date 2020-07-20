@@ -1,0 +1,15 @@
+.DS_Store
+*~
+/nbproject/*
+/.idea/*
+/*tags*
+.idea
+.idea/*
+/.idea
+/.idea/*
+
+/intaro.retailcrm/log/*
+/vendor/
+.env
+.phpunit.result.cache
+/release/

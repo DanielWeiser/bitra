@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    bootstrap="tests/bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    verbose="true"
+    processIsolation="false"
+    stopOnFailure="false"
+    >
+    <testsuites>
+        <testsuite name="retailcrm Bitrix module Test Suite">
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <exclude>
+                <directory suffix=".php">retailcrm/translations</directory>
+                <file>bootstrap.php</file>
+                <file>index.php</file>
+                <file>logo.gif</file>
+                <file>logo.png</file>
+                <file>objects.xml</file>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="coverage.xml"/>
+    </logging>
+</phpunit>
