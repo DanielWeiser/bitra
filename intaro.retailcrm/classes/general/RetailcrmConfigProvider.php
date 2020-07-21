@@ -523,7 +523,7 @@ class RetailcrmConfigProvider
     /**
      * getShipmentDeducted
      *
-     * @return array
+     * @return bool|string|null
      */
     public static function getShipmentDeducted()
     {
@@ -531,7 +531,7 @@ class RetailcrmConfigProvider
             static::$shipmentDeducted = static::getOption(RetailcrmConstants::CRM_SHIPMENT_DEDUCTED);
         }
 
-        return static::$shops;
+        return static::$shipmentDeducted;
     }
 
     /**
