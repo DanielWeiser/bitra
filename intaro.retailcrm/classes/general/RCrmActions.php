@@ -510,7 +510,6 @@ class RCrmActions
                         'params' => $params
                     ), 'uploadApiErrors');
                 } else {
-
                     self::eventLog(
                         __CLASS__ . '::' . $method,
                         'RetailCrm\ApiClient::' . $methodApi,
@@ -521,7 +520,7 @@ class RCrmActions
                         'methodApi' => $methodApi,
                         'errorMsg' => !empty($result['errorMsg']) ? $result['errorMsg'] : '',
                         'errors' => !empty($result['errors']) ? $result['errors'] : '',
-                        'params' => $params,
+                        'params' => $params
                     ), 'apiErrors');
                 }
 

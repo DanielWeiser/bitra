@@ -380,8 +380,7 @@ class RetailCrmICML
 
             // Set filter
             $filter = array(
-                "IBLOCK_ID" => $id,
-                "ACTIVE" => 'Y',
+                "IBLOCK_ID" => $id
             );
             $order = array("id");
             $arNavStatParams = array(

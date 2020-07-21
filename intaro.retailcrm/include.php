@@ -37,7 +37,6 @@ CModule::AddAutoloadClasses(
         'BuilderBase'                               => 'classes/general/BuilderBase.php',
         'AddressBuilder'                            => 'classes/general/AddressBuilder.php',
         'AbstractBuilder'                           => 'classes/general/AbstractBuilder.php',
-        'BaseModel'                                 => 'classes/general/Model/BaseModel.php',
-        'RetailCrmService'                          => 'classes/general/services/RetailCrmService.php',
+        'BaseModel'                                 => 'classes/general/Model/BaseModel.php'
     )
 );
