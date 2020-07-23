@@ -51,9 +51,6 @@ class RetailcrmConfigProvider
     /** @var bool|null|string */
     private static $corporateClient;
 
-    /** @var bool|null|string $shipmentDeducted */
-    private static $shipmentDeducted;
-
     /** @var array $sitesList */
     private static $sitesList;
 
@@ -518,20 +515,6 @@ class RetailcrmConfigProvider
         }
 
         return static::$shops;
-    }
-
-    /**
-     * getShipmentDeducted
-     *
-     * @return bool|string|null
-     */
-    public static function getShipmentDeducted()
-    {
-        if (self::isEmptyNotZero(static::$shipmentDeducted)) {
-            static::$shipmentDeducted = static::getOption(RetailcrmConstants::CRM_SHIPMENT_DEDUCTED);
-        }
-
-        return static::$shipmentDeducted;
     }
 
     /**

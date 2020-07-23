@@ -81,6 +81,13 @@ class RetailCrmHistory
                     continue;
                 }
 
+                if (COption::GetOptionString("main", "new_user_phone_required") === 'Y') {
+                    if (empty($customer['phones'])) {
+                        Logger::getInstance()->write('$customer["phones"] is empty. Customer is not created', 'createCustomerError');
+                        continue;
+                    }
+                }
+
                 if (isset($customer['externalId']) && !is_numeric($customer['externalId'])) {
                     unset($customer['externalId']);
                 }
@@ -205,7 +212,6 @@ class RetailCrmHistory
         $optionsCanselOrder = RetailcrmConfigProvider::getCancellableOrderPaymentStatuses();
         $currency = RetailcrmConfigProvider::getCurrencyOrDefault();
         $contragentTypes = array_flip(RetailcrmConfigProvider::getContragentTypes());
-        $shipmentDeducted = RetailcrmConfigProvider::getShipmentDeducted();
 
         $api = new RetailCrm\ApiClient(RetailcrmConfigProvider::getApiUrl(), RetailcrmConfigProvider::getApiKey());
 
@@ -367,6 +373,13 @@ class RetailCrmHistory
                                 && (!isset($order['contact']['id']) || !isset($order['customer']['id'])))
                         ) {
                             continue;
+                        }
+
+                        if (COption::GetOptionString("main", "new_user_phone_required") === 'Y') {
+                            if (empty($order['customer']['phones'])) {
+                                Logger::getInstance()->write('$customer["phones"] is empty. Order is not created', 'createCustomerError');
+                                continue;
+                            }
                         }
 
                         $login = null;
@@ -1112,29 +1125,6 @@ class RetailCrmHistory
 
                     if (isset($orderCrm)) {
                         unset($orderCrm);
-                    }
-
-                    if (isset($order['fullPaidAt']) && is_string($order['fullPaidAt'])) {
-                        $newOrder->setField('PAID', 'Y');
-                    }
-
-                    if ($shipmentDeducted === 'Y') {
-                        $collection = $newOrder->getShipmentCollection()->getNotSystemItems();
-                        if ($order['shipped']) {
-                            if ($collection->count() === 0) {
-                                $collection = $newOrder->getShipmentCollection();
-                                $shipment = $collection->createItem();
-                                $shipment->setField('DEDUCTED', 'Y');
-                            } else {
-                                foreach ($collection as $shipment) {
-                                    $shipment->setField('DEDUCTED', 'Y');
-                                }
-                            }
-                        } else {
-                            foreach ($collection as $shipment) {
-                                $shipment->setField('DEDUCTED', 'N');
-                            }
-                        }
                     }
 
                     $newOrder->setField('PRICE', $orderSumm);

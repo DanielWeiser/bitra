@@ -60,6 +60,10 @@ if(!CModule::IncludeModule('intaro.retailcrm') || !CModule::IncludeModule('sale'
 $_GET['errc'] = htmlspecialchars(trim($_GET['errc']));
 $_GET['ok'] = htmlspecialchars(trim($_GET['ok']));
 
+if (COption::GetOptionString("main", "new_user_phone_required") === 'Y') {
+    echo ShowMessage(array("TYPE"=>"ERROR", "MESSAGE"=>GetMessage('PHONE_REQUIRED')));
+}
+
 if($_GET['errc']) echo CAdminMessage::ShowMessage(GetMessage($_GET['errc']));
 if($_GET['ok'] && $_GET['ok'] == 'Y') echo CAdminMessage::ShowNote(GetMessage('ICRM_OPTIONS_OK'));
 
@@ -458,13 +462,6 @@ if (isset($_POST['Update']) && ($_POST['Update'] == 'Y')) {
         UnRegisterModuleDependences("main", "OnBeforeProlog", $mid, "RetailCrmDc", "add");
     }
 
-    //shipment
-    if (htmlspecialchars(trim($_POST['shipment_deducted'])) == 'Y') {
-        $shipment_deducted = 'Y';
-    } else {
-        $shipment_deducted = 'N';
-    }
-
     //corporate-cliente
     if (htmlspecialchars(trim($_POST['corp-client'])) == 'Y') {
         $cc = 'Y';
@@ -566,7 +563,6 @@ if (isset($_POST['Update']) && ($_POST['Update'] == 'Y')) {
 
     COption::SetOptionString($mid, $CRM_DISCOUNT_ROUND, $discount_round);
     COption::SetOptionString($mid, $CRM_PURCHASE_PRICE_NULL, $purchasePrice_null);
-    COption::SetOptionString($mid, RetailcrmConstants::CRM_SHIPMENT_DEDUCTED, $shipment_deducted);
 
     COption::SetOptionString($mid, $CRM_CC, $cc);
     COption::SetOptionString($mid, $CRM_CORP_SHOPS, serialize(RCrmActions::clearArr($bitrixCorpShopsArr)));
@@ -615,13 +611,17 @@ if (isset($_POST['Update']) && ($_POST['Update'] == 'Y')) {
         echo CAdminMessage::ShowMessage(GetMessage('ERR_JSON'));
     }
 
-    $delivTypes = array();
-    foreach ($arResult['deliveryTypesList'] as $delivType) {
-        if ($delivType['active'] === true) {
-            $delivTypes[$delivType['code']] = $delivType;
+    $deliveryTypes = array();
+    $deliveryIntegrationCode = array();
+    foreach ($arResult['deliveryTypesList'] as $deliveryType) {
+        if ($deliveryType['active'] === true) {
+            $deliveryTypes[$deliveryType['code']] = $deliveryType;
+            $deliveryIntegrationCode[$deliveryType['code']] = $deliveryType['integrationCode'];
         }
     }
-    $arResult['deliveryTypesList'] = $delivTypes;
+
+    $arResult['deliveryTypesList'] = $deliveryTypes;
+    COption::SetOptionString($mid, RetailcrmConstants::CRM_INTEGRATION_DELIVERY, serialize(RCrmActions::clearArr($deliveryIntegrationCode)));
 
     //bitrix orderTypesList -- personTypes
     $arResult['bitrixOrderTypesList'] = RCrmActions::OrderTypesList($arResult['arSites']);
@@ -682,7 +682,6 @@ if (isset($_POST['Update']) && ($_POST['Update'] == 'Y')) {
 
     $optionDiscRound = COption::GetOptionString($mid, $CRM_DISCOUNT_ROUND, 0);
     $optionPricePrchaseNull = COption::GetOptionString($mid, $CRM_PURCHASE_PRICE_NULL, 0);
-    $optionShipmentDeducted = COption::GetOptionString($mid, RetailcrmConstants::CRM_SHIPMENT_DEDUCTED, 0);
 
     //corporate-cliente
     $optionCorpClient = COption::GetOptionString($mid, $CRM_CC, 0);
@@ -1459,14 +1458,6 @@ if (isset($_POST['Update']) && ($_POST['Update'] == 'Y')) {
                     <label><input class="addr" type="checkbox" name="shops-corporate-<?echo $sitesList['code'];?>" value="Y" <?php if(in_array($sitesList['code'], $optionCorpShops)) echo "checked"; ?>> <?php echo $sitesList['name'].' ('.$sitesList['code'].')'; ?></label>
                 </td>
                 <?php endforeach;?>
-                </td>
-            </tr>
-
-            <tr class="heading">
-                <td colspan="2" class="option-other-heading">
-                    <b>
-                        <label><input class="addr" type="checkbox" name="shipment_deducted" value="Y" <?php if($optionShipmentDeducted === 'Y') echo "checked"; ?>><?php echo "Разрешать отгрузку при получении статуса Отгружено из crm" ?></label>
-                    </b>
                 </td>
             </tr>
         <?php endif;?>
